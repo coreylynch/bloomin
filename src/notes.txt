@@ -1,0 +1,79 @@
+TL;DR
+
+WRITE THE BINDINGS
+#######################################################
+3 essential components of a Python-C binding:
+-- C wrapper functions: one for each function you want callable from python. Wrapper calls a function of class method or it creates/destroys a heap object
+
+-- The Method Table: one entry in the table for each function you want callable from Python. Method table == table of contents. 
+
+-- init function: one per module; it's how the interpreter gets started with the module
+
+
+COMPILE/LINK THE BINDINGS
+#######################################################
+
+
+CALL IT FROM PYTHON
+#######################################################
+
+#######################################################
+
+
+each function id a PyObject *
+
+need to return a PyObject, usually use Py_BuildValue
+
+need to create a static array of PyMethodDef functions 
+with one struct for each function we want to export from our module.
+each struct has a c string with the name of the function in python, a c pointer to the function, some flags, and a doc_string
+
+main of the module is the initname() function
+all it does is call a C API function called Py_InitModule, with args(name of module, pointer to array of structs of functions in the module, a docstring)
+
+
+Basic workflow:
+1. Write some C constructs
+2. Describe them as arrays of structures
+3. create python constructs
+
+build using distutils
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+implement new built-in object types,
+
+add C function that will be called
+(spam_system gets called as spam.system)
+
+C function always has two args: self , args
+
+self points to the module object for module level funcs
+args points to a Python tuple object containing arguments; each item in the tuple corresponds to an argument in the call's argument list
+
+PyArg_ParseTuple checks arguments and converts them to ctypes
+
+return a value using Py_BuildValue()
+
+need to list an extension's name and address in a "method table": PyMethodDef
+
+method table passed to the interpreter in the module's initialization function,
+(type PyMODINIT_FUNC),
+which must be named initname(), as in initspam(void)
+
+when python imports spam for the first time, initspam() is called
+
+initspam() calls Py_InitModule()
